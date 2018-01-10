@@ -6,7 +6,8 @@ class ChatBar extends Component {
 
     this.state = {
       content: '',
-      currentUser: this.props.currentUser
+      currentUser: this.props.currentUser,
+      oldUserName: this.props.currentUser
     };
   }
 
@@ -18,6 +19,11 @@ class ChatBar extends Component {
 
   onKeyPress(event){
     if(event.key === 'Enter'){
+      // check to see if user has changed their name before they sent a message
+      if(this.state.oldUserName !== this.state.currentUser){
+        this.props.changeUser(this.state.oldUserName, this.state.currentUser);
+        this.setState({oldUserName: this.state.currentUser});
+      }
       this.props.addMessage(this.state.content, this.state.currentUser);
       event.target.value = '';
     }
@@ -29,11 +35,19 @@ class ChatBar extends Component {
     });
   }
 
+  onUserChange(event){
+    if(event.key === 'Enter'){
+      this.props.changeUser(this.state.oldUserName, this.state.currentUser);
+      this.setState({oldUserName: this.state.currentUser});
+    }
+  }
+
   render(){
     return (
       <footer className="chatbar">
         <input className="chatbar-username"
           defaultValue={this.state.currentUser}
+          onKeyPress={this.onUserChange.bind(this)}
           onInput={this.onNewUser.bind(this)}
           placeholder="Your Name (Optional)" />
         <input className="chatbar-message"
