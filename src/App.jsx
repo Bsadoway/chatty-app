@@ -9,33 +9,25 @@ class App extends Component {
       currentUser: {
         name: ''
       },
-      messages: [
-        {
-          id: 1,
-          username: "bob",
-          content: "has anyone seen my marbles?"
-        }, {
-          id: 2,
-          username: "anonymouse",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      messages: []
     };
   }
 
   addMessage(content, user) {
-    const newMessage = {
-      id: Math.random(),
-      username: user,
-      content: content
-    };
-    this.socket.send(JSON.stringify({user: user, content:content}));
-    // this.setState({messages: this.state.messages.concat(newMessage)});
+
+    if(!user){
+      user = "Anonymoose"
+    }
+
+    this.socket.send(JSON.stringify({username: user, content: content}));
   }
 
   componentDidMount() {
     this.socket = new WebSocket("ws://localhost:3001", "protocolOne");
     console.log("Connected to Server");
+    this.socket.onmessage = (event) => {
+      this.setState({messages: this.state.messages.concat(JSON.parse(event.data))});
+    }
 
   }
 
