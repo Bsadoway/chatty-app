@@ -41,7 +41,6 @@ class App extends Component {
         this.setState({
           activeUserCount: data.size
         });
-        console.log(this.state.activeUserCount);
       }
     }
   }
