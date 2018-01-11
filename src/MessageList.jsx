@@ -11,7 +11,8 @@ class MessageList extends Component {
             type={message.type}
             username={message.username}
             content={message.content}
-            colour={message.colour}/>
+            colour={message.colour}
+            image={message.image}/>
         ))}
       </main>
     );

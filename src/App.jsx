@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
+import NavBar from './NavBar.jsx';
 import MessageList from './MessageList.jsx';
 
 class App extends Component {
@@ -12,6 +13,17 @@ class App extends Component {
       activeUserCount: 0,
       messages: []
     };
+  }
+
+  checkforUrl(message){
+    const elements = message.content.split(' ');
+    elements.forEach((item) =>{
+      if(checkURL(item)){
+        message.image = item;
+        message.content = message.content.replace(item, '');
+      }
+    });
+    return message;
   }
 
   addMessage(content, user) {
@@ -31,11 +43,13 @@ class App extends Component {
   componentDidMount() {
     this.socket = new WebSocket("ws://localhost:3001", "protocolOne");
     console.log("Connected to Server");
+
+    // handle incoming message if it is a normal message or a change to users connected
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if(data.type){
         this.setState({
-          messages: this.state.messages.concat(data)
+          messages: this.state.messages.concat(this.checkforUrl(data))
         });
       } else {
         this.setState({
@@ -45,15 +59,17 @@ class App extends Component {
     }
   }
 
-  render() {
+  render() {  
     return (<div>
-      <nav className="navbar">
-        <a href="/" className="navbar-brand">Chatty</a>
-        <p className="user-count">{this.state.activeUserCount} users online</p>
-      </nav>
-      <MessageList messages={this.state.messages}/>
+      <NavBar activeUserCount={this.state.activeUserCount}/>
+      <MessageList messages={this.state.messages} />
       <ChatBar currentUser={this.state.currentUser.name} addMessage={this.addMessage.bind(this)} changeUser={this.changeUser.bind(this)}/>
     </div>);
   }
+}
+
+// checks if the message contains a picture url
+function checkURL(url) {
+    return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 }
 export default App;
