@@ -15,6 +15,7 @@ class App extends Component {
     };
   }
 
+  // extract an image url from the message
   checkforUrl(message){
     const elements = message.content.split(' ');
     elements.forEach((item) =>{
@@ -59,7 +60,7 @@ class App extends Component {
     }
   }
 
-  render() {  
+  render() {
     return (<div>
       <NavBar activeUserCount={this.state.activeUserCount}/>
       <MessageList messages={this.state.messages} />
@@ -72,4 +73,5 @@ class App extends Component {
 function checkURL(url) {
     return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 }
+
 export default App;
